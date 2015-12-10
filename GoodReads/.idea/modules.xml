@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://D:/PythonProjects/GoodReads/.idea/GoodReads.iml" filepath="D:/PythonProjects/GoodReads/.idea/GoodReads.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GoodReads.iml" filepath="$PROJECT_DIR$/GoodReads.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>
