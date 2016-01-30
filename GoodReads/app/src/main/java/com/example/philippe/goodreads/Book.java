@@ -30,6 +30,7 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Book implements Serializable {
@@ -236,8 +237,31 @@ public class Book implements Serializable {
         }
     }
 
-    public JSONObject jsonify(){
-        
+    String mId;
+    private String mIsbn;
+    private String mIsbn13;
+    private int mTextReviewsCount;
+    private String mTitle;
+    private String mImageUrl;
+    private String mSmallImageUrl;
+    private String mLink;
+    private int mPages;
+    private float mAverageRating;
+    private int mRatingsCount;
+    private String mDescription;
+    private List<Author> mAuthors = new ArrayList<Author>();
+    private int mYearPublished;
+    public JSONObject jsonify() throws JSONException {
+        JSONObject book = new JSONObject();
+        book.put("id",mId);
+        book.put("isbn", mIsbn);
+        book.put("isbn13",mIsbn13);
+        book.put("textReviewsCount", mTextReviewsCount);
+        book.put("title",mTitle);
+        book.put("imageUrl",mImageUrl);
+        book.put("smallImageUrl",mSmallImageUrl);
+        book.put("link",mLink);
+
     }
 
     public String getId() {
