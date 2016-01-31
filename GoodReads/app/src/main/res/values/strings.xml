@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">GoodReads</string>
+    <string name="action_settings">settings</string>
+    <string name="action_download_shelves">downloadShelves</string>
 </resources>
