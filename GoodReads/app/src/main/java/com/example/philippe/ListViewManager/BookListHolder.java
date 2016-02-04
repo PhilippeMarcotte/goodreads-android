@@ -18,7 +18,7 @@ public class BookListHolder {
         public TextView getUpperText() {
             if (this.upperText == null) {
 
-                this.upperText = (TextView) view.findViewById(R.id.name);
+                this.upperText = (TextView) view.findViewById(R.id.nom);
             }
 
             return this.upperText;
