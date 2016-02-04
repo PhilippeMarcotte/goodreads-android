@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //===============================================================================
 
-package com.example.philippe.goodreads;
+package com.example.philippe.goodreadsapi;
 
 public class ResourceType {
     public static final String RATING = "rating";

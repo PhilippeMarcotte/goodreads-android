@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.RelativeLayout;
 
 
 import com.example.philippe.goodreads.R;
@@ -32,9 +33,12 @@ public class BookListViewAdapter extends ArrayAdapter{
             else {
                 holder = (BookListHolder) convertView.getTag();
             }
-            holder.getUpperText().setText((String) getItem(position));
-            holder.getLowerText().setText((String)getItem(position));
-
+            holder.getUpperText().setText((String)getItem(position));
+            holder.getLowerText().setText((String) getItem(position));
+            // Resets the toolbar to be closed
+            View descriptionBar = convertView.findViewById(R.id.descriptionBar);
+            ((RelativeLayout.LayoutParams) descriptionBar.getLayoutParams()).bottomMargin = -50;
+            descriptionBar.setVisibility(View.GONE);
             return convertView;
         }
 
