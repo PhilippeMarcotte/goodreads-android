@@ -30,6 +30,7 @@ import android.sax.Element;
 import android.sax.EndElementListener;
 import android.sax.EndTextElementListener;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,6 +52,46 @@ public class Book implements Serializable {
     private List<Author> mAuthors = new ArrayList<Author>();
     private int mYearPublished;
     private Reviews mReviews = new Reviews();
+
+    public Book(){};
+    /*book.put("id",mId);
+    book.put("isbn", mIsbn);
+    book.put("isbn13",mIsbn13);
+    book.put("textReviewsCount", mTextReviewsCount);
+    book.put("title",mTitle);
+    book.put("imageUrl",mImageUrl);
+    book.put("smallImageUrl",mSmallImageUrl);
+    book.put("link",mLink);
+    book.put("pages", mPages);
+    book.put("averageRating", mAverageRating);
+    book.put("ratingsCount", mRatingsCount);
+    book.put("description", mDescription);
+    for (Author author:
+    mAuthors) {
+        book.accumulate("authors",author.getName());
+    }
+    book.put("yearPublished",mYearPublished);*/
+    public Book(JSONObject book) throws JSONException {
+        mId = book.getString("id");
+        mIsbn = book.getString("isbn");
+        mIsbn13 = book.getString("isbn13");
+        mTextReviewsCount = book.getInt("textReviewsCount");
+        mTitle = book.getString("title");
+        mImageUrl = book.getString("imageUrl");
+        mSmallImageUrl = book.getString("smallImageUrl");
+        mLink = book.getString("link");
+        mPages = book.getInt("pages");
+        mAverageRating = (float)book.getDouble("averageRating");
+        mRatingsCount = book.getInt("ratingsCount");
+        mDescription = book.getString("description");
+        JSONArray authors = book.getJSONArray("authors");
+        for (int i = 0; i < authors.length(); i++){
+            Author author = new Author();
+            author.setName(authors.getString(i));
+            mAuthors.add(author);
+        }
+        mYearPublished = book.getInt("yearPublished");
+    }
 
     public Book copy() {
         Book bookCopy = new Book();

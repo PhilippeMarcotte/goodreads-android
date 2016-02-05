@@ -14,13 +14,18 @@ import android.widget.ListView;
 
 import com.example.philippe.ListViewManager.BookListViewAdapter;
 import com.example.philippe.ListViewManager.ExpandAnimation;
+import com.example.philippe.goodreadsapi.Book;
 
+import org.json.JSONArray;
+
+import java.io.File;
 import java.lang.String;
 import java.util.ArrayList;
 
 
 public class MainActivity extends AppCompatActivity {
-
+    private BookListViewAdapter adapter;
+    private ListView list;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -29,12 +34,18 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar appBar = (Toolbar) findViewById(R.id.appBar);
         setSupportActionBar(appBar);
+        list = (ListView) findViewById(R.id.listview);
+        File shelfFile = new File(getFilesDir(),"toReadShelf");
+        if(shelfFile.exists())
+            createList();
 
-        ArrayList<String> arrayList = new ArrayList<String>();
-        arrayList.add("test1");
-        arrayList.add("test2");
-        ListView list = (ListView) findViewById(R.id.listview);
-        list.setAdapter(new BookListViewAdapter(getApplicationContext(), R.layout.book_item, arrayList));
+    }
+
+    private void createList(){
+        ShelfLoader shelfLoader = new ShelfLoader("toRead",getApplicationContext());
+        ArrayList<Book> bookList = new ArrayList<>(shelfLoader.load());
+        adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, bookList);
+        list.setAdapter(adapter);
         // Creating an item click listener, to open/close our toolbar for each item
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
@@ -65,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
 
             case R.id.action_download_shelves:
                 new DownloadFilesTask(getApplicationContext()).execute();
-
+                ListView list = (ListView) findViewById(R.id.listview);
+                adapter.clear();
+                createList();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

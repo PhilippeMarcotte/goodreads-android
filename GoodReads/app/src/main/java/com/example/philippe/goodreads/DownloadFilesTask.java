@@ -37,7 +37,7 @@ class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
 
         try {
             outputStream = context.openFileOutput("toReadShelf",Context.MODE_PRIVATE);
-            Reviews mimouShelves = GoodreadsService.getAllBooksOnShelf("to-read", "30067343");
+            Reviews mimouShelves = GoodreadsService.getAllBooksOnShelf("to-read", GoodreadsService.getAuthorizedUser().getId());
             Log.d("json", mimouShelves.jsonify().toString());
             outputStream.write(mimouShelves.jsonify().toString().getBytes());
             outputStream.close();

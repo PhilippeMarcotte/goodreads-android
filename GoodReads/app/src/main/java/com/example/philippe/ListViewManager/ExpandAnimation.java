@@ -47,6 +47,8 @@ public class ExpandAnimation extends Animation {
             // Calculating the new bottom margin, and setting it
             mViewLayoutParams.bottomMargin = mMarginStart
                     + (int) ((mMarginEnd - mMarginStart) * interpolatedTime);
+            mViewLayoutParams.height += mMarginStart
+                    + (int) ((mMarginEnd - mMarginStart) * interpolatedTime);
 
             // Invalidating the layout, making us seeing the changes we made
             mAnimatedView.requestLayout();
