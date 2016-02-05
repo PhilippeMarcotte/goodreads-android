@@ -3,6 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:padding="8dp" >
+    <!-- Release Year -->
+    <TextView
+        android:id="@+id/releaseYear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="year"
+        android:textColor="@color/textColorPrimary"
+        android:layout_alignParentRight="true"
+        />
 
 
     <!-- Movie Title -->
@@ -12,6 +21,8 @@
         android:layout_height="wrap_content"
         android:text="title"
         android:textColor="@color/textColorPrimary"
+        android:layout_toLeftOf="@id/releaseYear"
+        android:layout_alignParentLeft="true"
         android:textStyle="bold"/>
 
     <!-- Rating -->
@@ -21,34 +32,40 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title"
         android:layout_marginTop="1dip"
-        android:textColor="@color/textColorPrimary"
+        android:textColor="@color/textColorSecondary"
         android:text="By author"
         />
+
+
 
     <!-- Genre -->
     <TextView
         android:id="@+id/nbPages"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/author"
         android:layout_marginTop="5dp"
-        android:textColor="@color/textColorPrimary"
-        android:text="genre"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/textColorSecondary"
+        android:text="pages"
         />
-
-
-    <!-- Release Year -->
+    <!-- Genre -->
     <TextView
-        android:id="@+id/releaseYear"
+        android:id="@+id/shelves"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="year"
-        android:textColor="@color/textColorPrimary"
-        android:layout_alignParentRight="true"
-         />
+        android:layout_below="@id/author"
+        android:layout_marginTop="5dp"
+        android:layout_toLeftOf="@id/nbPages"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/textColorSecondary"
+        android:text="shelves"
+        />
+
     <LinearLayout android:id="@+id/descriptionBar"
         android:visibility="gone"
         android:layout_below="@id/nbPages"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="-50dip"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent">

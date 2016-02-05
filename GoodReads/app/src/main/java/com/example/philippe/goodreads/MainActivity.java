@@ -15,12 +15,14 @@ import android.widget.ListView;
 import com.example.philippe.ListViewManager.BookListViewAdapter;
 import com.example.philippe.ListViewManager.ExpandAnimation;
 import com.example.philippe.goodreadsapi.Book;
+import com.example.philippe.goodreadsapi.Review;
 
 import org.json.JSONArray;
 
 import java.io.File;
 import java.lang.String;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -36,15 +38,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(appBar);
         list = (ListView) findViewById(R.id.listview);
         File shelfFile = new File(getFilesDir(),"toReadShelf");
-        if(shelfFile.exists())
+        if(shelfFile.exists()){
             createList();
+        }
+
 
     }
 
     private void createList(){
         ShelfLoader shelfLoader = new ShelfLoader("toRead",getApplicationContext());
-        ArrayList<Book> bookList = new ArrayList<>(shelfLoader.load());
-        adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, bookList);
+        ArrayList<Review> reviewList = new ArrayList<>(shelfLoader.load());
+        adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, reviewList);
         list.setAdapter(adapter);
         // Creating an item click listener, to open/close our toolbar for each item
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -75,9 +79,17 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_download_shelves:
-                new DownloadFilesTask(getApplicationContext()).execute();
+                DownloadFilesTask task = new DownloadFilesTask(getApplicationContext());
+                task.execute();
+                try {
+                    task.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
                 ListView list = (ListView) findViewById(R.id.listview);
-                adapter.clear();
+//                adapter.clear();
                 createList();
             default:
                 // If we got here, the user's action was not recognized.

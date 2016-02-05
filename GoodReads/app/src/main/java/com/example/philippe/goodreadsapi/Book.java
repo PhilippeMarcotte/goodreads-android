@@ -33,6 +33,7 @@ import android.sax.EndTextElementListener;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 public class Book implements Serializable {
     private static final long serialVersionUID = 0L;
@@ -84,10 +85,16 @@ public class Book implements Serializable {
         mAverageRating = (float)book.getDouble("averageRating");
         mRatingsCount = book.getInt("ratingsCount");
         mDescription = book.getString("description");
-        JSONArray authors = book.getJSONArray("authors");
-        for (int i = 0; i < authors.length(); i++){
+        Object authors = book.get("authors");
+        if(authors instanceof JSONArray) {
+            for (int i = 0; i < ((JSONArray)authors).length(); i++) {
+                Author author = new Author();
+                author.setName(((JSONArray)authors).getString(i));
+                mAuthors.add(author);
+            }
+        } else if (authors instanceof String){
             Author author = new Author();
-            author.setName(authors.getString(i));
+            author.setName((String)authors);
             mAuthors.add(author);
         }
         mYearPublished = book.getInt("yearPublished");
@@ -291,7 +298,7 @@ public class Book implements Serializable {
         book.put("pages", mPages);
         book.put("averageRating", mAverageRating);
         book.put("ratingsCount", mRatingsCount);
-        book.put("description", mDescription);
+        book.put("description", Jsoup.parse(mDescription).text());
         for (Author author:
              mAuthors) {
             book.accumulate("authors",author.getName());

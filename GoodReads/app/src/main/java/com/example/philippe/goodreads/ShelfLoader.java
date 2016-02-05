@@ -1,6 +1,7 @@
 package com.example.philippe.goodreads;
 
 import android.content.Context;
+import android.widget.RelativeLayout;
 
 import com.example.philippe.goodreadsapi.Book;
 import com.example.philippe.goodreadsapi.Review;
@@ -30,17 +31,17 @@ public class ShelfLoader {
         this.context = context;
     }
 
-    public ArrayList<Book> load(){
+    public ArrayList<Review> load(){
         String strJson;
         JSONArray jsonArray;
-        ArrayList<Book> bookList = null;
+        ArrayList<Review> bookList = null;
         try {
             strJson = getStringFromFile();
             jsonArray = new JSONArray(strJson);
             bookList = new ArrayList<>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                Book book = new Book(jsonArray.getJSONObject(i));
-                bookList.add(book);
+                Review review = new Review(jsonArray.getJSONObject(i));
+                bookList.add(review);
             }
         }catch(JSONException e){
             e.printStackTrace();

@@ -25,7 +25,9 @@ package com.example.philippe.goodreadsapi;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.xml.sax.Attributes;
@@ -56,7 +58,17 @@ public class Review implements Serializable {
     private List<String> mShelves = new ArrayList<String>();
     private User mUser = new User();
     private Comments mComments = new Comments();
-
+    public Review(){};
+    public Review(JSONObject review) throws JSONException {
+        mBook = new Book(review.getJSONObject("book"));
+        Object shelves = review.get("shelves");
+        if (shelves instanceof JSONArray){
+            for (int i = 0; i < ((JSONArray) shelves).length(); i++) {
+                mShelves.add(((JSONArray) shelves).getString(i));
+            }
+        }else if(shelves instanceof String)
+            mShelves.add((String)shelves);
+    }
     public Review copy() {
         Review reviewCopy = new Review();
 
@@ -250,7 +262,13 @@ public class Review implements Serializable {
     }
 
     public JSONObject jsonify() throws JSONException {
-        return mBook.jsonify();
+        JSONObject review = new JSONObject();
+        for (String shelf:
+             mShelves) {
+            review.accumulate("shelves",shelf);
+        }
+        review.put("book",mBook.jsonify());
+        return review;
     }
 
     public String getId() {

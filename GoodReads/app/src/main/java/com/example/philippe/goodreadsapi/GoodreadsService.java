@@ -164,7 +164,7 @@ public class GoodreadsService {
             builder.appendQueryParameter("shelf", shelfName);
             builder.appendQueryParameter("v", "2");
             builder.appendQueryParameter("sort", "title");
-            builder.appendQueryParameter("order", "d");
+            builder.appendQueryParameter("order", "a");
             builder.appendQueryParameter("per_page", "200");
             OAuthRequest getBooksOnShelfRequest = new OAuthRequest(Verb.GET, builder.build().toString());
             if (isAuthenticated()) {

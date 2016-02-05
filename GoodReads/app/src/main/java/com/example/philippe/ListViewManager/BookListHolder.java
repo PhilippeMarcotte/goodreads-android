@@ -10,9 +10,10 @@ import com.example.philippe.goodreads.R;
  */
 public class BookListHolder {
         private View view;
-        private TextView title = null, authors = null, releaseYear = null, nbPages = null, description = null;
+        private TextView title = null, authors = null, releaseYear = null, nbPages = null, description = null, shelves = null;
         public BookListHolder(View view) {
             this.view = view;
+
         }
 
         public TextView getTitle() {
@@ -50,5 +51,12 @@ public class BookListHolder {
                 this.description = (TextView) view.findViewById(R.id.description);
             }
             return this.description;
+        }
+
+        public TextView getShelves() {
+            if (this.shelves == null) {
+                this.shelves = (TextView) view.findViewById(R.id.shelves);
+            }
+            return this.shelves;
         }
     }
