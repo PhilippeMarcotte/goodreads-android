@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Filter;
 import android.widget.RelativeLayout;
 
 
@@ -22,8 +23,12 @@ import java.util.List;
  * Created by Philippe_Travail on 2016-02-01.
  */
 public class BookListViewAdapter extends ArrayAdapter{
+        private List<Review> items;
+        private List<Review> filtered;
+        private Filter filter;
         public BookListViewAdapter(Context context, int textViewResourceId, List<Review> list) {
             super(context, textViewResourceId, list);
+            this.items = list;
         }
 
         @Override
@@ -73,5 +78,59 @@ public class BookListViewAdapter extends ArrayAdapter{
             descriptionBar.setVisibility(View.GONE);
             return convertView;
         }
+
+    @Override
+    public Filter getFilter()
+    {
+        if(filter == null)
+            filter = new BookTitleFilter();
+        return filter;
+    }
+
+    private class BookTitleFilter extends Filter
+    {
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            // NOTE: this function is *always* called from a background thread, and
+            // not the UI thread.
+            constraint = constraint.toString().toLowerCase();
+            FilterResults result = new FilterResults();
+            if(constraint != null && constraint.toString().length() > 0)
+            {
+                ArrayList<Review> filt = new ArrayList<>();
+
+                for (Review review:
+                     items) {
+                if(review.getBook().getTitle().toLowerCase().contains(constraint))
+                    filt.add(review);
+                }
+                result.count = filt.size();
+                result.values = filt;
+            }
+            else
+            {
+                synchronized(this)
+                {
+                    result.values = items;
+                    result.count = items.size();
+                }
+            }
+            return result;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            // NOTE: this function is *always* called from the UI thread.
+            filtered = (ArrayList<Review>)results.values;
+            notifyDataSetChanged();
+            clear();
+            for(int i = 0, l = filtered.size(); i < l; i++)
+                add(filtered.get(i));
+            notifyDataSetInvalidated();
+        }
+
+    }
 
     }

@@ -2,9 +2,17 @@ package com.example.philippe.goodreads;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ClipData;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 
 import com.example.philippe.goodreadsapi.GoodreadsService;
 import com.example.philippe.goodreadsapi.Reviews;
@@ -21,7 +29,7 @@ import java.net.URL;
 /**
  * Created by Philippe_Travail on 2015-12-09.
  */
-class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
+class DownloadFilesTask extends AsyncTask<Void, Void, Void> {
     final String CONSUMER_KEY = "OjyBECynlWliftzJdwmqA";
     final String CONSUMER_SECRET = "F1YLHobIuTKGNEyTvwxwaYv2QW7252T2KXd6IWOnWE";
 
@@ -30,12 +38,12 @@ class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
     private Context context;
     private MainActivity mainActivity;
 
-    public DownloadFilesTask(Context context, MainActivity activity){
+    public DownloadFilesTask(MainActivity activity){
         this.mainActivity = activity;
-        this.context = context;
+        this.context = activity.getApplicationContext();
     }
 
-    protected Long doInBackground(URL... urls) {
+    protected Void doInBackground(Void... params) {
         GoodreadsService.init(CONSUMER_KEY, CONSUMER_SECRET);
         GoodreadsService.setAccessToken(ACCESS_TOKEN, TOKEN_SECRET);
         FileOutputStream outputStream;
@@ -53,12 +61,32 @@ class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return 0l;
+
+        return null;
     }
 
     @Override
-    protected void onPostExecute(Long aLong) {
-        super.onPostExecute(aLong);
+    protected void onPreExecute() {
+        super.onPreExecute();
+        LayoutInflater inflater = (LayoutInflater) mainActivity.getApplication()
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        ImageView iv = (ImageView) inflater.inflate(R.layout.loading_view,
+                null);
+
+        Animation rotation = AnimationUtils.loadAnimation(mainActivity.getApplication(),
+                R.anim.loading_rotate);
+        rotation.setRepeatCount(Animation.INFINITE);
+        iv.startAnimation(rotation);
+        mainActivity.mLoading.setActionView(iv);
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+        super.onPostExecute(result);
         mainActivity.createList();
+        mainActivity.mLoading.getActionView().clearAnimation();
+        mainActivity.mLoading.collapseActionView();
+        mainActivity.mLoading.setActionView(null);
+        mainActivity.invalidateOptionsMenu();
     }
 }

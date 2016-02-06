@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private BookListViewAdapter adapter;
     private ListView list;
     private Reviews mimouReviews;
+    public MenuItem mLoading;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void createList(){
         mimouReviews = new Reviews();
-        mimouReviews.loadShelf("toRead",getApplicationContext());
+        mimouReviews.loadShelf("toRead", getApplicationContext());
 
         adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, mimouReviews.getReviews());
         list.setAdapter(adapter);
@@ -69,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 toolbar.startAnimation(expandAni);
             }
         });
+
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -85,19 +88,9 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_download_shelves:
-                LayoutInflater inflater = (LayoutInflater) getApplication()
-                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                ImageView iv = (ImageView) inflater.inflate(R.layout.loading_view,
-                        null);
 
-                Animation rotation = AnimationUtils.loadAnimation(getApplication(),
-                        R.anim.loading_rotate);
-                rotation.setRepeatCount(Animation.INFINITE);
-                iv.startAnimation(rotation);
-
-                item.setActionView(iv);
-
-                DownloadFilesTask task = new DownloadFilesTask(getApplicationContext(), this);
+                mLoading = item;
+                DownloadFilesTask task = new DownloadFilesTask(this);
 
                 task.execute();
                 /*try {
@@ -109,9 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 //                adapter.clear();
                // createList();
-                item.collapseActionView();
-                item.setActionView(null);
-                invalidateOptionsMenu();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
