@@ -22,9 +22,11 @@
 
 package com.example.philippe.goodreadsapi;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.OAuthRequest;
@@ -133,8 +135,8 @@ public class GoodreadsService {
         builder.appendQueryParameter("key", sApiKey);
         builder.appendQueryParameter("shelf", shelfName);
         builder.appendQueryParameter("v", "2");
-        builder.appendQueryParameter("sort", "date_updated");
-        builder.appendQueryParameter("order", "d");
+        builder.appendQueryParameter("sort", "title");
+        builder.appendQueryParameter("order", "a");
         builder.appendQueryParameter("per_page", "200");
         builder.appendQueryParameter("page", Integer.toString(page));
         OAuthRequest getBooksOnShelfRequest = new OAuthRequest(Verb.GET, builder.build().toString());
@@ -144,7 +146,25 @@ public class GoodreadsService {
         Response response = getBooksOnShelfRequest.send();
 
         GoodreadsResponse responseData = GoodreadsService.parse(response.getStream());
+        Reviews reviews = responseData.getReviews();
+
+
         return responseData.getReviews();
+    }
+
+    public static Reviews getFilteredBooksOnShelf(String shelfName, String userId, int page, Map<String, String> bookMap) throws Exception {
+        Reviews reviews = getBooksOnShelf(shelfName,userId,page);
+        Book book;
+        for (Review review:
+                reviews.getReviews()) {
+            book = review.getBook();
+            if(bookMap.containsKey(book.getIsbn13()))
+                reviews.getReviews().remove(review);
+            else
+                bookMap.put(book.getIsbn13(),book.getTitle());
+        }
+
+        return reviews;
     }
 
     public static Reviews getAllBooksOnShelf(String shelfName, String userId) throws Exception {
@@ -155,26 +175,14 @@ public class GoodreadsService {
         allBooksOnShelf.setStart(1);
         allBooksOnShelf.setEnd(totalBooksOnShelf);
         allBooksOnShelf.setTotal(totalBooksOnShelf);
-        Uri.Builder builder = new Uri.Builder();
-        builder.scheme("http");
-        builder.authority("www.goodreads.com");
-        builder.path("review/list/" + userId + ".xml");
-        for(int i = 0; i < totalPages; i++){
-            builder.appendQueryParameter("key", sApiKey);
-            builder.appendQueryParameter("shelf", shelfName);
-            builder.appendQueryParameter("v", "2");
-            builder.appendQueryParameter("sort", "title");
-            builder.appendQueryParameter("order", "a");
-            builder.appendQueryParameter("per_page", "200");
-            OAuthRequest getBooksOnShelfRequest = new OAuthRequest(Verb.GET, builder.build().toString());
-            if (isAuthenticated()) {
-                sService.signRequest(sAccessToken, getBooksOnShelfRequest);
-            }
-            Response response = getBooksOnShelfRequest.send();
 
-            GoodreadsResponse responseData = GoodreadsService.parse(response.getStream());
-            allBooksOnShelf.getReviews().addAll(responseData.getReviews().getReviews());
-            builder.clearQuery();
+        for(int i = 1; i <= totalPages; i++){
+            Reviews reviews = getBooksOnShelf(shelfName, userId, i);
+            allBooksOnShelf.getReviews().addAll(reviews.getReviews());
+        }
+        for (Review review:
+             allBooksOnShelf.getReviews()) {
+            allBooksOnShelf.getBookMap().put(review.getBook().getId(),review.getBook().getTitle());
         }
         return allBooksOnShelf;
     }
@@ -238,6 +246,13 @@ public class GoodreadsService {
 
         GoodreadsResponse updatesResponse = GoodreadsService.parse(response.getStream());
         return updatesResponse.getUpdates();
+    }
+
+    public static boolean verifyIntegrity(File file){
+        ShelfLoader loader = new ShelfLoader(file);
+        if(loader.load() == null)
+            return false;
+        return true;
     }
 // 	
 // 	public static Followers getFollowers(String userId) throws Exception 

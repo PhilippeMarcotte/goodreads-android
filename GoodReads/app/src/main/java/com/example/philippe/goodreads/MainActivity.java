@@ -8,19 +8,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ExpandableListView;
 import android.widget.ListView;
 
 
 import com.example.philippe.ListViewManager.BookListViewAdapter;
 import com.example.philippe.ListViewManager.ExpandAnimation;
-import com.example.philippe.goodreadsapi.Book;
+import com.example.philippe.goodreadsapi.GoodreadsService;
 import com.example.philippe.goodreadsapi.Review;
-
-import org.json.JSONArray;
+import com.example.philippe.goodreadsapi.Reviews;
+import com.example.philippe.goodreadsapi.ShelfLoader;
 
 import java.io.File;
-import java.lang.String;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
@@ -28,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class MainActivity extends AppCompatActivity {
     private BookListViewAdapter adapter;
     private ListView list;
+    private Reviews mimouReviews;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         //requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -39,16 +38,18 @@ public class MainActivity extends AppCompatActivity {
         list = (ListView) findViewById(R.id.listview);
         File shelfFile = new File(getFilesDir(),"toReadShelf");
         if(shelfFile.exists()){
-            createList();
+            if(GoodreadsService.verifyIntegrity(shelfFile))
+                createList();
         }
 
 
     }
 
     private void createList(){
-        ShelfLoader shelfLoader = new ShelfLoader("toRead",getApplicationContext());
-        ArrayList<Review> reviewList = new ArrayList<>(shelfLoader.load());
-        adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, reviewList);
+        mimouReviews = new Reviews();
+        mimouReviews.loadShelf("toRead",getApplicationContext());
+
+        adapter = new BookListViewAdapter(getApplicationContext(), R.layout.book_item, mimouReviews.getReviews());
         list.setAdapter(adapter);
         // Creating an item click listener, to open/close our toolbar for each item
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

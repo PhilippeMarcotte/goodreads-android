@@ -24,18 +24,21 @@ package com.example.philippe.goodreadsapi;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.xml.sax.Attributes;
 
+import android.content.Context;
 import android.sax.Element;
 import android.sax.StartElementListener;
 
 public class Reviews implements Serializable {
     private static final long serialVersionUID = 0L;
-
+    private HashMap<String, String> bookMap = new HashMap<>();
     private int mStart;
     private int mEnd;
     private int mTotal;
@@ -97,6 +100,15 @@ public class Reviews implements Serializable {
 
     public int getStart() {
         return mStart;
+    }
+
+    public Map<String, String> getBookMap(){
+        return bookMap;
+    }
+
+    public void loadShelf(String shelfName, Context context){
+        ShelfLoader loader = new ShelfLoader(shelfName, context);
+        mReviews.addAll(loader.loadShelf());
     }
 
     public void setStart(int start) {

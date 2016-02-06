@@ -1,4 +1,4 @@
-package com.example.philippe.goodreads;
+package com.example.philippe.goodreadsapi;
 
 import android.content.Context;
 import android.widget.RelativeLayout;
@@ -25,13 +25,20 @@ import java.util.ArrayList;
  */
 public class ShelfLoader {
     private String shelf;
-    private Context context;
+    private Context context = null;
+    private File fl;
     public ShelfLoader(String shelf, Context context){
         this.shelf = shelf;
         this.context = context;
+        this.fl = new File(context.getFilesDir(),shelf);
     }
 
-    public ArrayList<Review> load(){
+    public ShelfLoader(File file){
+        this.fl = file;
+        this.shelf = file.getName().substring(0,file.getName().length() - "Shelf".length());
+    }
+
+    public ArrayList<Review> loadShelf(){
         String strJson;
         JSONArray jsonArray;
         ArrayList<Review> bookList = null;
@@ -65,7 +72,7 @@ public class ShelfLoader {
     }
 
     public String getStringFromFile () throws IOException {
-        File fl = new File(context.getFilesDir(),shelf + "Shelf");
+
         FileInputStream fin = new FileInputStream(fl);
         String ret = convertStreamToString(fin);
         //Make sure you close all streams.

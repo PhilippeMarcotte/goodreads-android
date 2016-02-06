@@ -16,12 +16,13 @@ import com.example.philippe.goodreadsapi.Review;
 import org.jsoup.Jsoup;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Philippe_Travail on 2016-02-01.
  */
 public class BookListViewAdapter extends ArrayAdapter{
-        public BookListViewAdapter(Context context, int textViewResourceId, ArrayList<Review> list) {
+        public BookListViewAdapter(Context context, int textViewResourceId, List<Review> list) {
             super(context, textViewResourceId, list);
         }
 
