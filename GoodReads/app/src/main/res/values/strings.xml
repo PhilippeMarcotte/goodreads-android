@@ -3,4 +3,5 @@
     <string name="action_settings">settingsIcon</string>
     <string name="action_download_shelves">downloadShelvesIcon</string>
     <string name="action_search">searchIcon</string>
+    <string name="action_loading">loadingIcon</string>
 </resources>

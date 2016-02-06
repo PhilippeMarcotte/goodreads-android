@@ -1,13 +1,18 @@
 package com.example.philippe.goodreads;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 
@@ -37,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(appBar);
         list = (ListView) findViewById(R.id.listview);
         File shelfFile = new File(getFilesDir(),"toReadShelf");
-        if(shelfFile.exists()){
-            if(GoodreadsService.verifyIntegrity(shelfFile))
-                createList();
-        }
+        //if(shelfFile.exists()){
+        //    if(GoodreadsService.verifyIntegrity(shelfFile))
+        //        createList();
+        //}
 
 
     }
 
-    private void createList(){
+    public void createList(){
         mimouReviews = new Reviews();
         mimouReviews.loadShelf("toRead",getApplicationContext());
 
@@ -80,18 +85,33 @@ public class MainActivity extends AppCompatActivity {
                 return true;
 
             case R.id.action_download_shelves:
-                DownloadFilesTask task = new DownloadFilesTask(getApplicationContext());
+                LayoutInflater inflater = (LayoutInflater) getApplication()
+                        .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                ImageView iv = (ImageView) inflater.inflate(R.layout.loading_view,
+                        null);
+
+                Animation rotation = AnimationUtils.loadAnimation(getApplication(),
+                        R.anim.loading_rotate);
+                rotation.setRepeatCount(Animation.INFINITE);
+                iv.startAnimation(rotation);
+
+                item.setActionView(iv);
+
+                DownloadFilesTask task = new DownloadFilesTask(getApplicationContext(), this);
+
                 task.execute();
-                try {
+                /*try {
                     task.get();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 } catch (ExecutionException e) {
                     e.printStackTrace();
-                }
-                ListView list = (ListView) findViewById(R.id.listview);
+                }*/
 //                adapter.clear();
-                createList();
+               // createList();
+                item.collapseActionView();
+                item.setActionView(null);
+                invalidateOptionsMenu();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.

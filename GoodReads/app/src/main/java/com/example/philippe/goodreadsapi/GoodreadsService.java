@@ -250,7 +250,7 @@ public class GoodreadsService {
 
     public static boolean verifyIntegrity(File file){
         ShelfLoader loader = new ShelfLoader(file);
-        if(loader.load() == null)
+        if(loader.loadShelf() == null)
             return false;
         return true;
     }

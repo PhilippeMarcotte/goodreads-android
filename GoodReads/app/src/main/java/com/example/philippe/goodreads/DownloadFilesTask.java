@@ -1,5 +1,7 @@
 package com.example.philippe.goodreads;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -26,8 +28,10 @@ class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
     final String ACCESS_TOKEN = "Y2yWPj3IZivAbQ7CAcXi0A";
     final String TOKEN_SECRET = "s5QOq80VQ8oIPtZdPcfephehEuGAGPGvHr7lwBiCTE";
     private Context context;
+    private MainActivity mainActivity;
 
-    public DownloadFilesTask(Context context){
+    public DownloadFilesTask(Context context, MainActivity activity){
+        this.mainActivity = activity;
         this.context = context;
     }
 
@@ -52,4 +56,9 @@ class DownloadFilesTask extends AsyncTask<URL, Integer, Long> {
         return 0l;
     }
 
+    @Override
+    protected void onPostExecute(Long aLong) {
+        super.onPostExecute(aLong);
+        mainActivity.createList();
+    }
 }

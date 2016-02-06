@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Philippe on 2016-02-04.
@@ -30,7 +31,7 @@ public class ShelfLoader {
     public ShelfLoader(String shelf, Context context){
         this.shelf = shelf;
         this.context = context;
-        this.fl = new File(context.getFilesDir(),shelf);
+        this.fl = new File(context.getFilesDir(),shelf+"Shelf");
     }
 
     public ShelfLoader(File file){
@@ -38,10 +39,10 @@ public class ShelfLoader {
         this.shelf = file.getName().substring(0,file.getName().length() - "Shelf".length());
     }
 
-    public ArrayList<Review> loadShelf(){
+    public List<Review> loadShelf(){
         String strJson;
         JSONArray jsonArray;
-        ArrayList<Review> bookList = null;
+        List<Review> bookList = null;
         try {
             strJson = getStringFromFile();
             jsonArray = new JSONArray(strJson);
