@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.RelativeLayout;
 
 
@@ -13,22 +14,38 @@ import com.example.philippe.goodreads.R;
 import com.example.philippe.goodreadsapi.Author;
 import com.example.philippe.goodreadsapi.Book;
 import com.example.philippe.goodreadsapi.Review;
+import com.example.philippe.utility.AccentStrip;
 
 import org.jsoup.Jsoup;
 
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Philippe_Travail on 2016-02-01.
  */
-public class BookListViewAdapter extends ArrayAdapter{
+public class BookListViewAdapter extends ArrayAdapter implements Filterable{
         private List<Review> items;
         private List<Review> filtered;
         private Filter filter;
+
         public BookListViewAdapter(Context context, int textViewResourceId, List<Review> list) {
             super(context, textViewResourceId, list);
             this.items = list;
+            this.filtered = items;
+        }
+
+        public int getCount() {
+            return filtered.size();
+        }
+
+        public Object getItem(int position) {
+            return filtered.get(position);
+        }
+
+        public long getItemId(int position) {
+            return position;
         }
 
         @Override
@@ -44,7 +61,7 @@ public class BookListViewAdapter extends ArrayAdapter{
             else {
                 holder = (BookListHolder) convertView.getTag();
             }
-            Review review = (Review)getItem(position);
+            Review review = filtered.get(position);
             Book book = review.getBook();
             holder.getTitle().setText(book.getTitle());
             String authors = null;
@@ -88,26 +105,27 @@ public class BookListViewAdapter extends ArrayAdapter{
     }
 
     private class BookTitleFilter extends Filter
-    {
-
-        @Override
-        protected FilterResults performFiltering(CharSequence constraint) {
-            // NOTE: this function is *always* called from a background thread, and
-            // not the UI thread.
-            constraint = constraint.toString().toLowerCase();
-            FilterResults result = new FilterResults();
-            if(constraint != null && constraint.toString().length() > 0)
             {
-                ArrayList<Review> filt = new ArrayList<>();
 
-                for (Review review:
-                     items) {
-                if(review.getBook().getTitle().toLowerCase().contains(constraint))
-                    filt.add(review);
-                }
-                result.count = filt.size();
-                result.values = filt;
-            }
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    // NOTE: this function is *always* called from a background thread, and
+                    // not the UI thread.
+                    constraint = AccentStrip.flattenToAscii(constraint.toString().toLowerCase());
+
+                    FilterResults result = new FilterResults();
+                    if(constraint != null && constraint.toString().length() > 0)
+                    {
+                        ArrayList<Review> filt = new ArrayList<>();
+                        List<Review> list = items;
+                        for (Review review:
+                                list) {
+                            if(AccentStrip.flattenToAscii(review.getBook().getTitle().toLowerCase()).contains(constraint))
+                                filt.add(review);
+                        }
+                        result.count = filt.size();
+                        result.values = filt;
+                    }
             else
             {
                 synchronized(this)
@@ -125,10 +143,10 @@ public class BookListViewAdapter extends ArrayAdapter{
             // NOTE: this function is *always* called from the UI thread.
             filtered = (ArrayList<Review>)results.values;
             notifyDataSetChanged();
-            clear();
-            for(int i = 0, l = filtered.size(); i < l; i++)
-                add(filtered.get(i));
-            notifyDataSetInvalidated();
+            //clear();
+            //for(int i = 0, l = filtered.size(); i < l; i++)
+            //    add(filtered.get(i));
+            //notifyDataSetInvalidated();
         }
 
     }

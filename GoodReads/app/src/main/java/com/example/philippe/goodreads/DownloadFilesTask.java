@@ -47,16 +47,11 @@ class DownloadFilesTask extends AsyncTask<Void, Void, Void> {
         GoodreadsService.init(CONSUMER_KEY, CONSUMER_SECRET);
         GoodreadsService.setAccessToken(ACCESS_TOKEN, TOKEN_SECRET);
         FileOutputStream outputStream;
-        ObjectOutputStream outputObject;
         try {
             outputStream = context.openFileOutput("toReadShelf",Context.MODE_PRIVATE);
             Reviews mimouShelves = GoodreadsService.getAllBooksOnShelf("to-read", GoodreadsService.getAuthorizedUser().getId());
             Log.d("json", mimouShelves.jsonify().toString());
             outputStream.write(mimouShelves.jsonify().toString().getBytes());
-            outputStream = context.openFileOutput("toReadMap", Context.MODE_PRIVATE);
-            outputObject = new ObjectOutputStream(outputStream);
-            outputObject.writeObject(mimouShelves.getBookMap());
-            outputObject.close();
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();

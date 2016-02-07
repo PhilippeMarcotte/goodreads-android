@@ -1,8 +1,10 @@
 package com.example.philippe.goodreads;
 
+import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,10 +45,10 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(appBar);
         list = (ListView) findViewById(R.id.listview);
         File shelfFile = new File(getFilesDir(),"toReadShelf");
-        //if(shelfFile.exists()){
+        if(shelfFile.exists() && shelfFile.length() > 0){
         //    if(GoodreadsService.verifyIntegrity(shelfFile))
-        //        createList();
-        //}
+                createList();
+        }
 
 
     }
@@ -77,6 +79,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.app_bar, menu);
+
+        // Associate searchable configuration with the SearchView
+        SearchManager searchManager =
+                (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                if(adapter != null){
+                    adapter.getFilter().filter(query);
+                }
+                return true;
+
+            }
+
+        });
         return true;
     }
 
@@ -102,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
                 }*/
 //                adapter.clear();
                // createList();
+                return true;
+            case R.id.action_search:
+
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
